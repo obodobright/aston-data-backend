@@ -25,7 +25,7 @@ export const sendEmail = async ({ from, to, subject, html }) => {
 export const sendBankDetailsEmail = async (user) => {
   try {
     const mailOptions = {
-      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+      from: "Aston Data Academy <onboarding@resend.dev>",
       to: user.email,
       subject: `Payment Instructions - Aston Data Academy Course Registration`,
       html:
