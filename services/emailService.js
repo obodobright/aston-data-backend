@@ -45,8 +45,8 @@ export const sendBankDetailsEmail = async (user) => {
     };
     const emailSending = await sendEmail(mailOptions);
 
-    console.log("Email sent:", emailSending.data.id);
-    return { success: true, messageId: emailSending.data.id };
+    console.log("Email sent:", emailSending.data);
+    return { success: true, messageId: "the email was sent" };
   } catch (error) {
     console.error("Error sending email:", error);
     throw error;
