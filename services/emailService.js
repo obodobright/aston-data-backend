@@ -1,24 +1,29 @@
-import nodemailer from "nodemailer";
 import { outsideNigeriaPaymentEmail } from "./emailTemplates/outsideUkTemplates.js";
 import { ukPaymentEmail } from "./emailTemplates/withinUkTemplates.js";
+import { Resend } from "resend";
+import dotenv from "dotenv";
 
-// Create reusable transporter object using SMTP transport
-const createTransporter = () => {
-  return nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || "smtp.gmail.com",
-    port: parseInt(process.env.EMAIL_PORT || "587"),
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-  });
+dotenv.config();
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+export const sendEmail = async ({ from, to, subject, html }) => {
+  try {
+    const response = await resend.emails.send({
+      from,
+      to,
+      subject,
+      html,
+    });
+
+    return response;
+  } catch (error) {
+    console.error("Error sending email with Resend:", error);
+    throw new Error("Failed to send email");
+  }
 };
 
 export const sendBankDetailsEmail = async (user) => {
   try {
-    const transporter = createTransporter();
-
     const mailOptions = {
       from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
       to: user.email,
@@ -38,10 +43,10 @@ export const sendBankDetailsEmail = async (user) => {
               amountGbp: 100,
             }),
     };
+    const emailSending = await sendEmail(mailOptions);
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log("Email sent:", info.messageId);
-    return { success: true, messageId: info.messageId };
+    console.log("Email sent:", emailSending.data.id);
+    return { success: true, messageId: emailSending.data.id };
   } catch (error) {
     console.error("Error sending email:", error);
     throw error;
