@@ -25,7 +25,7 @@ export const sendEmail = async ({ from, to, subject, html }) => {
 export const sendBankDetailsEmail = async (user) => {
   try {
     const mailOptions = {
-      from: "Aston Data Academy <onboarding@resend.dev>",
+      from: "Aston Data Academy <info@astondataacademy.co.uk>",
       to: user.email,
       subject: `Payment Instructions - Aston Data Academy Course Registration`,
       html:
@@ -45,7 +45,7 @@ export const sendBankDetailsEmail = async (user) => {
     };
     const emailSending = await sendEmail(mailOptions);
 
-    console.log("Email sent:", emailSending.data);
+    console.log("Email sent:", emailSending);
     return { success: true, messageId: "the email was sent" };
   } catch (error) {
     console.error("Error sending email:", error);

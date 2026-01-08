@@ -76,7 +76,7 @@ export const ukPaymentEmail = ({ user, amountGbp }) => {
                   <li>Please include your <strong>name and email</strong> as the payment reference</li>
                   <li>
                     Send proof of payment to:
-                    <strong>${process.env.EMAIL_FROM || process.env.EMAIL_USER}</strong>
+                    <strong>${process.env.EMAIL_USER}</strong>
                   </li>
                   <li>Payment verification takes 24–48 hours</li>
                   <li>You will receive confirmation once payment is verified</li>

@@ -31,7 +31,7 @@ export const outsideNigeriaPaymentEmail = ({ user, usdAmount, rates }) => {
   
                 <p>
                   Thank you for registering for our
-                  <strong>4-Week Data Analytics Masterclass</strong>.
+                  <strong>3 months Data Analytics Masterclass</strong>.
                 </p>
   
                 <!-- Amount Table -->
@@ -106,7 +106,7 @@ export const outsideNigeriaPaymentEmail = ({ user, usdAmount, rates }) => {
                   <li>Please include your <strong>name and email</strong> in the payment reference</li>
                   <li>
                     Send payment proof to:
-                    <strong>${process.env.EMAIL_FROM || process.env.EMAIL_USER}</strong>
+                    <strong>${process.env.EMAIL_USER}</strong>
                   </li>
                   <li>Payment verification takes 24–48 hours</li>
                   <li>Access details will be shared once payment is confirmed</li>
