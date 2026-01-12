@@ -2,6 +2,10 @@ export const outsideNigeriaPaymentEmail = ({ user, usdAmount, rates }) => {
   const ngnAmount = Math.round(usdAmount * rates.usdToNgn).toLocaleString();
   const ghsAmount = Math.round(usdAmount * rates.usdToGhs).toLocaleString();
 
+  const installmentUsd = Math.round(usdAmount / 3).toLocaleString();
+  const installmentNgn = Math.round((usdAmount / 3) * rates.usdToNgn).toLocaleString();
+  const installmentGhs = Math.round((usdAmount / 3) * rates.usdToGhs).toLocaleString();
+
   return `
   <!DOCTYPE html>
   <html>
@@ -34,11 +38,11 @@ export const outsideNigeriaPaymentEmail = ({ user, usdAmount, rates }) => {
                   <strong>3 months Data Analytics Masterclass</strong>.
                 </p>
   
-                <!-- Amount Table -->
+                <!-- Full Payment Amount -->
                 <table width="100%" cellpadding="12" cellspacing="0" style="background:#f9fafb; border-radius:8px; margin:20px 0; text-align:center;">
                   <tr>
                     <td colspan="2" style="font-size:18px; font-weight:bold; color:#10B981;">
-                      USD $${usdAmount} Equivalent Payment
+                      Total Course Fee – USD $${usdAmount}
                     </td>
                   </tr>
                   <tr>
@@ -49,6 +53,32 @@ export const outsideNigeriaPaymentEmail = ({ user, usdAmount, rates }) => {
                     <td style="border-top:1px solid #e5e7eb;">
                       🇬🇭 <strong>Ghana</strong><br />
                       ${ghsAmount} GHS
+                    </td>
+                  </tr>
+                </table>
+
+                <!-- Installment Option -->
+                <table width="100%" cellpadding="12" cellspacing="0" style="background:#ecfeff; border-radius:8px; margin:20px 0;">
+                  <tr>
+                    <td style="font-size:17px; font-weight:bold; color:#0ea5e9;">
+                      💳 Flexible Payment Option – Pay in 3 Installments
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      You may choose to pay the course fee in <strong>three (3) equal installments</strong>.
+                      <br /><br />
+                      <strong>Each installment:</strong><br />
+                      USD $${installmentUsd} <br />
+                      🇳🇬 ₦${installmentNgn} <br />
+                      🇬🇭 ${installmentGhs} GHS
+                      <br /><br />
+                      <strong>Important:</strong>
+                      <ul style="margin:10px 0 0; padding-left:18px;">
+                        <li>The <strong>first installment</strong> is required to secure your slot</li>
+                        <li>The remaining two installments must be paid monthly</li>
+                        <li>Full payment must be completed before course completion</li>
+                      </ul>
                     </td>
                   </tr>
                 </table>

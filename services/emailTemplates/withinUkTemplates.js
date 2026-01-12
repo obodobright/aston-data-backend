@@ -1,5 +1,6 @@
 export const ukPaymentEmail = ({ user, amountGbp }) => {
   const formattedAmount = `£${amountGbp.toFixed(2)}`;
+  const installmentAmount = `£${(amountGbp / 3).toFixed(2)}`;
 
   return `
   <!DOCTYPE html>
@@ -33,12 +34,37 @@ export const ukPaymentEmail = ({ user, amountGbp }) => {
                   <strong>3 Months Data Analytics Masterclass</strong>.
                 </p>
   
-                <!-- Amount -->
+                <!-- Full Payment -->
                 <table width="100%" cellpadding="12" cellspacing="0"
                   style="background:#f9fafb; border-radius:8px; margin:20px 0; text-align:center;">
                   <tr>
                     <td style="font-size:18px; font-weight:bold; color:#10B981;">
-                      Amount to Pay: ${formattedAmount}
+                      Total Course Fee: ${formattedAmount}
+                    </td>
+                  </tr>
+                </table>
+
+                <!-- Installment Option -->
+                <table width="100%" cellpadding="12" cellspacing="0"
+                  style="background:#eef2ff; border-radius:8px; margin:20px 0;">
+                  <tr>
+                    <td style="font-size:17px; font-weight:bold; color:#0F4C81;">
+                      💳 Flexible Payment Option – Pay in 3 Installments
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      You may choose to split the total course fee into
+                      <strong>three (3) equal installments</strong>.
+                      <br /><br />
+                      <strong>Each installment:</strong> ${installmentAmount}
+                      <br /><br />
+                      <strong>Important:</strong>
+                      <ul style="margin:10px 0 0; padding-left:18px;">
+                        <li>The <strong>first installment</strong> secures your course slot</li>
+                        <li>The remaining two installments are paid monthly</li>
+                        <li>All installments must be completed before course completion</li>
+                      </ul>
                     </td>
                   </tr>
                 </table>
