@@ -90,6 +90,10 @@ export const ukPaymentEmail = ({ user, amountGbp }) => {
                     <td><strong>Account Number</strong></td>
                     <td>51776668</td>
                   </tr>
+                   <tr>
+                    <td><strong>Payee Name</strong></td>
+                    <td>Aston Victor</td>
+                  </tr>
                   <tr>
                     <td><strong>Sort Code</strong></td>
                     <td>77-17-37</td>
