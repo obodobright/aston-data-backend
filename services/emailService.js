@@ -40,7 +40,7 @@ export const sendBankDetailsEmail = async (user) => {
             })
           : ukPaymentEmail({
               user: { firstName: user.firstName },
-              amountGbp: 100,
+              amountGbp: 150,
             }),
     };
     const emailSending = await sendEmail(mailOptions);

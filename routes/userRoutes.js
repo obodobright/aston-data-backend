@@ -9,7 +9,6 @@ router.post("/register", async (req, res) => {
   try {
     const { firstName, lastName, email, phone, country, amount, currency } = req.body;
 
-    // Validate required fields
     if (!firstName || !lastName || !email || !phone || !country) {
       return res.status(400).json({
         error: "Missing required fields",
@@ -17,19 +16,16 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({ error: "Invalid email format" });
     }
 
-    // Check if user already exists
     const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
       return res.status(400).json({ message: "User with this email already exists" });
     }
 
-    // Determine amount and currency if not provided
     let finalAmount = amount;
     let finalCurrency = currency;
 
@@ -38,12 +34,11 @@ router.post("/register", async (req, res) => {
         finalAmount = finalAmount || 10000;
         finalCurrency = finalCurrency || "usd";
       } else {
-        finalAmount = finalAmount || 10000; // £100 in pence
+        finalAmount = finalAmount || 15000;
         finalCurrency = finalCurrency || "gbp";
       }
     }
 
-    // Create user
     const user = await User.create({
       firstName,
       lastName,
@@ -55,12 +50,10 @@ router.post("/register", async (req, res) => {
       paymentStatus: "pending",
     });
 
-    // Send bank details email
     try {
       await sendBankDetailsEmail(user);
     } catch (emailError) {
       console.error("Failed to send email:", emailError);
-      // Don't fail the registration if email fails
     }
 
     res.status(201).json({
@@ -95,7 +88,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// Get user by email (for checking status)
+// Get user by email for checking status
 router.get("/status/:email", async (req, res) => {
   try {
     const { email } = req.params;
