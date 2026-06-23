@@ -1,6 +1,7 @@
 import express from "express";
 import User from "../models/User.js";
 import { authenticateAdmin } from "../middleware/auth.js";
+import { sendPaymentSuccessfulEmail } from "../services/emailService.js";
 
 const router = express.Router();
 
@@ -90,19 +91,36 @@ router.patch("/users/:id", async (req, res) => {
       });
     }
 
-    const user = await User.findByIdAndUpdate(
-      id,
-      { paymentStatus, updatedAt: new Date() },
-      { new: true, runValidators: true }
-    ).select("-__v");
+    const user = await User.findById(id).select("-__v");
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
+    const previousPaymentStatus = user.paymentStatus;
+    const shouldSendResourcesEmail =
+      previousPaymentStatus === "pending" && ["paid", "verified"].includes(paymentStatus);
+
+    user.paymentStatus = paymentStatus;
+    await user.save();
+
+    let paymentEmailSent = false;
+    let paymentEmailError = null;
+
+    if (shouldSendResourcesEmail) {
+      try {
+        await sendPaymentSuccessfulEmail(user);
+        paymentEmailSent = true;
+      } catch (emailError) {
+        paymentEmailError = "Payment status was updated, but the resources email could not be sent.";
+        console.error("Failed to send payment successful email:", emailError);
+      }
+    }
+
     res.json({
       success: true,
-      message: "Payment status updated successfully",
+      message: paymentEmailError || "Payment status updated successfully",
+      paymentEmailSent,
       data: user,
     });
   } catch (error) {
