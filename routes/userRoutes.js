@@ -4,10 +4,18 @@ import { sendBankDetailsEmail } from "../services/emailService.js";
 
 const router = express.Router();
 
+const pricingByCountry = {
+  UK: { amount: 15000, currency: "gbp" },
+  Nigeria: { amount: 100000, currency: "ngn" },
+  Ghana: { amount: 1000, currency: "ghs" },
+  Other: { amount: 100, currency: "usd" },
+  "Outside Uk": { amount: 100, currency: "usd" },
+};
+
 // Register a new user
 router.post("/register", async (req, res) => {
   try {
-    const { firstName, lastName, email, phone, country, amount, currency } = req.body;
+    const { firstName, lastName, email, phone, country } = req.body;
 
     if (!firstName || !lastName || !email || !phone || !country) {
       return res.status(400).json({
@@ -26,18 +34,17 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ message: "User with this email already exists" });
     }
 
-    let finalAmount = amount;
-    let finalCurrency = currency;
+    const countryPricing = pricingByCountry[country];
 
-    if (!finalAmount || !finalCurrency) {
-      if (country === "Outside Uk") {
-        finalAmount = finalAmount || 10000;
-        finalCurrency = finalCurrency || "usd";
-      } else {
-        finalAmount = finalAmount || 15000;
-        finalCurrency = finalCurrency || "gbp";
-      }
+    if (!countryPricing) {
+      return res.status(400).json({
+        error: "Invalid country",
+        validCountries: Object.keys(pricingByCountry),
+      });
     }
+
+    const finalAmount = countryPricing.amount;
+    const finalCurrency = countryPricing.currency;
 
     const user = await User.create({
       firstName,

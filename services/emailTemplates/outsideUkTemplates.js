@@ -6,13 +6,93 @@ const escapeHtml = (value = "") =>
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 
-export const outsideNigeriaPaymentEmail = ({ user, amountNgn, amountGhs }) => {
+const formatAmount = ({ amount, currency }) => {
+  if (currency === "ngn") {
+    return `NGN ${Math.round(amount).toLocaleString()}`;
+  }
+
+  if (currency === "ghs") {
+    return `GHS ${Math.round(amount).toLocaleString()}`;
+  }
+
+  return `$${Math.round(amount).toLocaleString()}`;
+};
+
+const paymentDetailsByCountry = {
+  Nigeria: `
+    <table width="100%" cellpadding="10" cellspacing="0" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; margin:20px 0;">
+      <tr>
+        <td colspan="2" style="font-weight:bold; color:#020617;">
+          Nigeria Payment Details
+        </td>
+      </tr>
+      <tr>
+        <td style="color:#64748b;">Bank Name</td>
+        <td>GT Bank</td>
+      </tr>
+      <tr>
+        <td style="color:#64748b;">Account Number</td>
+        <td>0615798795</td>
+      </tr>
+      <tr>
+        <td style="color:#64748b;">Account Name</td>
+        <td>Victor Aston</td>
+      </tr>
+    </table>
+  `,
+  Ghana: `
+    <table width="100%" cellpadding="10" cellspacing="0" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; margin:20px 0;">
+      <tr>
+        <td colspan="2" style="font-weight:bold; color:#020617;">
+          Ghana Payment Details
+        </td>
+      </tr>
+      <tr>
+        <td style="color:#64748b;">Payment Method</td>
+        <td>Mobile Money (MoMo)</td>
+      </tr>
+      <tr>
+        <td style="color:#64748b;">MoMo Number</td>
+        <td>0540667727</td>
+      </tr>
+      <tr>
+        <td style="color:#64748b;">Name</td>
+        <td>Daniel Simeon</td>
+      </tr>
+    </table>
+  `,
+};
+
+const paypalDetails = ({ paymentCodeUrl = "https://ik.imagekit.io/hydekcjmz/PaypalCode.png" }) => `
+  <table width="100%" cellpadding="10" cellspacing="0" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; margin:20px 0;">
+    <tr>
+      <td style="font-weight:bold; color:#020617;">
+        Other Countries Payment Details
+      </td>
+    </tr>
+    <tr>
+      <td style="color:#334155; line-height:1.7;">
+        Please use the PayPal code below to make your payment.
+      </td>
+    </tr>
+    <tr>
+      <td align="center">
+        <img src="${paymentCodeUrl}" alt="Aston Data Academy PayPal payment code" width="240" style="display:block; max-width:240px; width:100%; height:auto; border-radius:12px; border:1px solid #e2e8f0;" />
+      </td>
+    </tr>
+    
+  </table>
+`;
+
+export const outsideNigeriaPaymentEmail = ({ user, country, amount, currency, paymentCodeUrl }) => {
   const firstName = escapeHtml(user.firstName);
-  const formattedNgnAmount = Math.round(amountNgn).toLocaleString();
-  const formattedGhsAmount = Math.round(amountGhs).toLocaleString();
-  const installmentNgn = Math.round(amountNgn / 3).toLocaleString();
-  const installmentGhs = Math.round(amountGhs / 3).toLocaleString();
+  const selectedCountry = country === "Outside Uk" ? "Other" : country;
+  const locationLabel = selectedCountry === "Other" ? "Other Countries" : selectedCountry;
+  const formattedAmount = formatAmount({ amount, currency });
+  const installmentAmount = formatAmount({ amount: amount / 3, currency });
   const supportEmail = process.env.EMAIL_FROM || process.env.EMAIL_USER;
+  const paymentDetails =
+    paymentDetailsByCountry[selectedCountry] || paypalDetails({ paymentCodeUrl });
 
   return `
   <!DOCTYPE html>
@@ -31,7 +111,7 @@ export const outsideNigeriaPaymentEmail = ({ user, amountNgn, amountGhs }) => {
               <td style="background:#020617; color:#ffffff; padding:28px;">
                 <p style="margin:0 0 8px; font-size:12px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:#cbd5e1;">Aston Data Academy</p>
                 <h1 style="margin:0; font-size:28px; line-height:1.2;">Payment instructions</h1>
-                <p style="margin:10px 0 0; color:#cbd5e1;">Course registration - Outside UK</p>
+                <p style="margin:10px 0 0; color:#cbd5e1;">Course registration - ${locationLabel}</p>
               </td>
             </tr>
 
@@ -46,18 +126,8 @@ export const outsideNigeriaPaymentEmail = ({ user, amountNgn, amountGhs }) => {
 
                 <table width="100%" cellpadding="12" cellspacing="0" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; margin:20px 0; text-align:center;">
                   <tr>
-                    <td colspan="2" style="font-size:18px; font-weight:bold; color:#0f172a;">
-                      Total Programme Fee
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="border-top:1px solid #e2e8f0; color:#475569;">
-                      <strong style="color:#0f172a;">Nigeria</strong><br />
-                      NGN ${formattedNgnAmount}
-                    </td>
-                    <td style="border-top:1px solid #e2e8f0; color:#475569;">
-                      <strong style="color:#0f172a;">Ghana</strong><br />
-                      GHS ${formattedGhsAmount}
+                    <td style="font-size:18px; font-weight:bold; color:#0f172a;">
+                      Total Programme Fee: ${formattedAmount}
                     </td>
                   </tr>
                 </table>
@@ -73,9 +143,7 @@ export const outsideNigeriaPaymentEmail = ({ user, amountNgn, amountGhs }) => {
                       You may choose to split the total programme fee into
                       <strong>three (3) equal installments</strong>.
                       <br /><br />
-                      <strong>Each installment:</strong><br />
-                      NGN ${installmentNgn}<br />
-                      GHS ${installmentGhs}
+                      <strong>Each installment:</strong> ${installmentAmount}
                       <br /><br />
                       <strong>Important:</strong>
                       <ul style="margin:10px 0 0; padding-left:18px;">
@@ -88,53 +156,14 @@ export const outsideNigeriaPaymentEmail = ({ user, amountNgn, amountGhs }) => {
                 </table>
 
                 <p style="margin:0 0 16px; font-size:16px; line-height:1.7;">
-                  Please make payment to <strong>one</strong> of the accounts below,
-                  depending on your location:
+                  Please complete your registration using the payment details below:
                 </p>
 
-                <table width="100%" cellpadding="10" cellspacing="0" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; margin:20px 0;">
-                  <tr>
-                    <td colspan="2" style="font-weight:bold; color:#020617;">
-                      Nigeria Payment Details
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="color:#64748b;">Bank Name</td>
-                    <td>Access Bank</td>
-                  </tr>
-                  <tr>
-                    <td style="color:#64748b;">Account Number</td>
-                    <td>1379060251</td>
-                  </tr>
-                </table>
-
-                <table width="100%" cellpadding="10" cellspacing="0" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; margin:20px 0;">
-                  <tr>
-                    <td colspan="2" style="font-weight:bold; color:#020617;">
-                      Ghana Payment Details
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="color:#64748b;">Payment Method</td>
-                    <td>Mobile Money (MoMo)</td>
-                  </tr>
-                  <tr>
-                    <td style="color:#64748b;">MoMo Number</td>
-                    <td>0248813788</td>
-                  </tr>
-                  <tr>
-                    <td style="color:#64748b;">Account Name</td>
-                    <td>Debvamk Business Solutions</td>
-                  </tr>
-                  <tr>
-                    <td style="color:#64748b;">Contact Person</td>
-                    <td>Bless Dellor</td>
-                  </tr>
-                </table>
+                ${paymentDetails}
 
                 <p style="margin:0 0 10px; font-size:16px;"><strong>Important Instructions:</strong></p>
                 <ul style="margin:0 0 20px; padding-left:18px; color:#334155; line-height:1.7;">
-                  <li>Please include your <strong>name and email</strong> in the payment reference</li>
+                  <li>Please include your <strong>name and email</strong> in the payment reference where possible</li>
                   <li>Send payment proof to: <strong>${process.env.EMAIL_USER}</strong></li>
                   <li>Payment verification takes 24-48 hours</li>
                   <li>Access details will be shared once payment is confirmed</li>

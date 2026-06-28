@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
   country: {
     type: String,
     required: [true, 'Country is required'],
-    enum: ['UK', 'Outside Uk'],
+    enum: ['UK', 'Nigeria', 'Ghana', 'Other', 'Outside Uk'],
     trim: true
   },
   amount: {
@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
   currency: {
     type: String,
     required: true,
-    enum: ['gbp', 'usd']
+    enum: ['gbp', 'ngn', 'ghs', 'usd']
   },
   paymentStatus: {
     type: String,

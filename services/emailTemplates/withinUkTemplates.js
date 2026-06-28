@@ -93,7 +93,7 @@ export const ukPaymentEmail = ({ user, amountGbp }) => {
                   </tr>
                   <tr>
                     <td style="color:#64748b;">Payee Name</td>
-                    <td>Aston Victor</td>
+                    <td>Victor Aston</td>
                   </tr>
                   <tr>
                     <td style="color:#64748b;">Sort Code</td>

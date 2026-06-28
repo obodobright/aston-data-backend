@@ -32,21 +32,27 @@ export const sendEmail = async ({ from, to, subject, html }) => {
 
 export const sendBankDetailsEmail = async (user) => {
   try {
-    const outsideUkAmountNgn = Number(process.env.OUTSIDE_UK_AMOUNT_NGN || 100000);
-    const outsideUkAmountGhs = Number(
-      process.env.OUTSIDE_UK_AMOUNT_GHS || Math.round(outsideUkAmountNgn * 0.0075)
+    const siteUrl = (process.env.FRONTEND_URL || "https://www.astondataacademy.co.uk").replace(
+      /\/$/,
+      "",
     );
+    const paymentCodePath = "https://ik.imagekit.io/hydekcjmz/PaypalCode.png" || "/PayPalCode.png";
+    const paymentCodeUrl = /^https?:\/\//i.test(paymentCodePath)
+      ? paymentCodePath
+      : `${siteUrl}${paymentCodePath.startsWith("/") ? paymentCodePath : `/${paymentCodePath}`}`;
 
     const mailOptions = {
       from: "Aston Data Academy <info@astondataacademy.co.uk>",
       to: user.email,
       subject: `Payment Instructions - Aston Data Academy Course Registration`,
       html:
-        user.country === "Outside Uk"
+        user.country !== "UK"
           ? outsideNigeriaPaymentEmail({
               user: { firstName: user.firstName },
-              amountNgn: outsideUkAmountNgn,
-              amountGhs: outsideUkAmountGhs,
+              country: user.country,
+              amount: user.amount,
+              currency: user.currency,
+              paymentCodeUrl,
             })
           : ukPaymentEmail({
               user: { firstName: user.firstName },
@@ -64,9 +70,15 @@ export const sendBankDetailsEmail = async (user) => {
 };
 
 export const sendPaymentSuccessfulEmail = async (user) => {
-  const siteUrl = (process.env.FRONTEND_URL || "https://www.astondataacademy.co.uk").replace(/\/$/, "");
-  const resourcesPath = process.env.RESOURCE_ACCESS_PATH || "/student-resources-2026-aston-data-academy-access";
-  const normalizedResourcesPath = resourcesPath.startsWith("/") ? resourcesPath : `/${resourcesPath}`;
+  const siteUrl = (process.env.FRONTEND_URL || "https://www.astondataacademy.co.uk").replace(
+    /\/$/,
+    "",
+  );
+  const resourcesPath =
+    process.env.RESOURCE_ACCESS_PATH || "/student-resources-2026-aston-data-academy-access";
+  const normalizedResourcesPath = resourcesPath.startsWith("/")
+    ? resourcesPath
+    : `/${resourcesPath}`;
   const resourcesUrl = `${siteUrl}${normalizedResourcesPath}`;
   const firstName = escapeHtml(user.firstName);
 

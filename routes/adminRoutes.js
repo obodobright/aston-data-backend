@@ -135,14 +135,16 @@ router.patch("/users/:id", async (req, res) => {
 // Get statistics
 router.get("/stats", async (req, res) => {
   try {
-    const [totalUsers, pendingUsers, paidUsers, verifiedUsers, ukUsers, nigeriaUsers] =
+    const [totalUsers, pendingUsers, paidUsers, verifiedUsers, ukUsers, nigeriaUsers, ghanaUsers, otherUsers] =
       await Promise.all([
         User.countDocuments(),
         User.countDocuments({ paymentStatus: "pending" }),
         User.countDocuments({ paymentStatus: "paid" }),
         User.countDocuments({ paymentStatus: "verified" }),
         User.countDocuments({ country: "UK" }),
-        User.countDocuments({ country: "Outside Uk" }),
+        User.countDocuments({ country: "Nigeria" }),
+        User.countDocuments({ country: "Ghana" }),
+        User.countDocuments({ country: { $in: ["Other", "Outside Uk"] } }),
       ]);
 
     res.json({
@@ -154,6 +156,8 @@ router.get("/stats", async (req, res) => {
         verifiedUsers,
         ukUsers,
         nigeriaUsers,
+        ghanaUsers,
+        otherUsers,
       },
     });
   } catch (error) {
