@@ -8,8 +8,8 @@ const pricingByCountry = {
   UK: { amount: 15000, currency: "gbp" },
   Nigeria: { amount: 100000, currency: "ngn" },
   Ghana: { amount: 1000, currency: "ghs" },
-  Other: { amount: 100, currency: "usd" },
-  "Outside Uk": { amount: 100, currency: "usd" },
+  Other: { amount: 150, currency: "usd" },
+  "Outside Uk": { amount: 150, currency: "usd" },
 };
 
 // Register a new user
