@@ -1,5 +1,6 @@
 import { outsideNigeriaPaymentEmail } from "./emailTemplates/outsideUkTemplates.js";
 import { ukPaymentEmail } from "./emailTemplates/withinUkTemplates.js";
+import { oneToOneSessionsSection } from "./emailTemplates/oneToOneSessions.js";
 import { Resend } from "resend";
 import dotenv from "dotenv";
 
@@ -44,7 +45,7 @@ export const sendBankDetailsEmail = async (user) => {
     const mailOptions = {
       from: "Aston Data Academy <info@astondataacademy.co.uk>",
       to: user.email,
-      subject: `Payment Instructions - Aston Data Academy Course Registration`,
+      subject: "Payment Instructions - Your One-to-One Data Analytics Mentorship",
       html:
         user.country !== "UK"
           ? outsideNigeriaPaymentEmail({
@@ -86,7 +87,7 @@ export const sendPaymentSuccessfulEmail = async (user) => {
     const mailOptions = {
       from: "Aston Data Academy <info@astondataacademy.co.uk>",
       to: user.email,
-      subject: "Payment Confirmed - Your Aston Data Academy Resources",
+      subject: "Payment Confirmed - Your One-to-One Mentorship and Resources",
       html: `
         <div style="margin:0;background:#f8fafc;padding:32px 16px;font-family:Arial,sans-serif;color:#0f172a;">
           <div style="max-width:640px;margin:0 auto;background:#ffffff;border-radius:18px;overflow:hidden;border:1px solid #e2e8f0;">
@@ -97,10 +98,10 @@ export const sendPaymentSuccessfulEmail = async (user) => {
             <div style="padding:28px;">
               <p style="margin:0 0 16px;font-size:16px;line-height:1.7;">Hi ${firstName},</p>
               <p style="margin:0 0 16px;font-size:16px;line-height:1.7;">
-                Your payment has been confirmed. You can now access the student learning resources for the Aston Data Academy programme.
+                Your payment for the Aston Data Academy one-to-one data analytics mentorship has been confirmed. You can now access your learning resources.
               </p>
               <p style="margin:0 0 24px;font-size:16px;line-height:1.7;">
-                Use the link below to open the resources page:
+                Use the link below to practise between your one-to-one sessions and prepare your portfolio projects:
               </p>
               <a
                 href="${resourcesUrl}"
@@ -112,6 +113,7 @@ export const sendPaymentSuccessfulEmail = async (user) => {
                 If the button does not work, copy and paste this link into your browser:<br />
                 <a href="${resourcesUrl}" style="color:#0f172a;">${resourcesUrl}</a>
               </p>
+              ${oneToOneSessionsSection}
             </div>
           </div>
         </div>

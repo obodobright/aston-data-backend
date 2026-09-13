@@ -1,3 +1,5 @@
+import { oneToOneSessionsSection } from "./oneToOneSessions.js";
+
 const escapeHtml = (value = "") =>
   String(value)
     .replace(/&/g, "&amp;")
@@ -29,7 +31,7 @@ export const ukPaymentEmail = ({ user, amountGbp }) => {
               <td style="background:#020617; color:#ffffff; padding:28px;">
                 <p style="margin:0 0 8px; font-size:12px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:#cbd5e1;">Aston Data Academy</p>
                 <h1 style="margin:0; font-size:28px; line-height:1.2;">Payment instructions</h1>
-                <p style="margin:10px 0 0; color:#cbd5e1;">Course registration - UK</p>
+                <p style="margin:10px 0 0; color:#cbd5e1;">One-to-one mentorship registration - UK</p>
               </td>
             </tr>
 
@@ -39,7 +41,7 @@ export const ukPaymentEmail = ({ user, amountGbp }) => {
 
                 <p style="margin:0 0 16px; font-size:16px; line-height:1.7;">
                   Thank you for registering for our
-                  <strong>2-month Data Analytics Training Programme</strong>.
+                  <strong>2-month personalised One-to-One Data Analytics Mentorship</strong>.
                 </p>
 
                 <table width="100%" cellpadding="12" cellspacing="0" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; margin:20px 0; text-align:center;">
@@ -65,7 +67,7 @@ export const ukPaymentEmail = ({ user, amountGbp }) => {
                       <br /><br />
                       <strong>Important:</strong>
                       <ul style="margin:10px 0 0; padding-left:18px;">
-                        <li>The <strong>first installment</strong> secures your programme slot</li>
+                        <li>The <strong>first installment</strong> secures your one-to-one mentorship</li>
                         <li>The remaining two installments are paid monthly</li>
                         <li>All installments must be completed before programme completion</li>
                       </ul>
@@ -108,6 +110,8 @@ export const ukPaymentEmail = ({ user, amountGbp }) => {
                   <li>Payment verification takes 24-48 hours</li>
                   <li>You will receive confirmation once payment is verified</li>
                 </ul>
+
+                ${oneToOneSessionsSection}
 
                 <p style="margin:0; font-size:16px; line-height:1.7;">
                   Best regards,<br />
